@@ -1,4 +1,4 @@
-name: Build PantryChef AI APK
+Build PantryChef AI APK
 
 on:
   workflow_dispatch:
