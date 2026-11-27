@@ -3,9 +3,10 @@ name: Build PantryChef AI APK
 on:
   workflow_dispatch:
   push:
+    branches: [ main ]
     paths:
       - 'pantrychef-ai.zip'
-      - '.github/workflows/android.yml'
+      - '.github/workflows/**'
 
 jobs:
   build:
@@ -23,11 +24,13 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Extract project ZIP
         run: unzip -q pantrychef-ai.zip -d project
 
-            - name: Set up Gradle
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build APK
@@ -48,8 +51,6 @@ jobs:
             cd "$PROJECT_DIR"
             gradle assembleDebug
           fi
-
-          
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
