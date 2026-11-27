@@ -1,4 +1,4 @@
-Build PantryChef AI APK
+name: Build PantryChef AI APK
 
 on:
   workflow_dispatch:
@@ -29,9 +29,11 @@ jobs:
 
       - name: Extract project ZIP
         run: unzip -q pantrychef-ai.zip -d project
+
       - name: Fix settings.gradle
         run: |
           find project -name "settings.gradle*" -exec sed -i '/foojay-resolver/d' {} +
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
