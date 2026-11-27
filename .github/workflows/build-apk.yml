@@ -1,0 +1,47 @@
+name: Build PantryChef AI APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'pantrychef-ai.zip'
+      - '.github/workflows/android.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Extract project ZIP
+        run: unzip -q pantrychef-ai.zip -d project
+
+      - name: Build APK
+        run: |
+          GRADLE_FILE=$(find project -type f -name gradlew | head -n 1)
+          if [ -z "$GRADLE_FILE" ]; then
+            echo "Gradle wrapper not found in ZIP"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$GRADLE_FILE")
+          cd "$PROJECT_DIR"
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PantryChef-AI-APK
+          path: project/**/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
