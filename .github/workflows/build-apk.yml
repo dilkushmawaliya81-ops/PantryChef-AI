@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Extract project ZIP
         run: unzip -q pantrychef-ai.zip -d project
