@@ -36,7 +36,12 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
-
+      - name: Create debug keystore
+        run: |
+          keytool -genkeypair -v -keystore project/debug.keystore \
+            -storepass android -keypass android \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 \
+            -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
       - name: Build APK
         run: |
           GRADLE_FILE=$(find project -type f -name gradlew | head -n 1)
