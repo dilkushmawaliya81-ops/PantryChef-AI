@@ -27,17 +27,29 @@ jobs:
       - name: Extract project ZIP
         run: unzip -q pantrychef-ai.zip -d project
 
+            - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Build APK
         run: |
           GRADLE_FILE=$(find project -type f -name gradlew | head -n 1)
-          if [ -z "$GRADLE_FILE" ]; then
-            echo "Gradle wrapper not found in ZIP"
-            exit 1
+          if [ -n "$GRADLE_FILE" ]; then
+            PROJECT_DIR=$(dirname "$GRADLE_FILE")
+            cd "$PROJECT_DIR"
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          else
+            BUILD_GRADLE=$(find project -maxdepth 4 -name "build.gradle*" | head -n 1)
+            if [ -z "$BUILD_GRADLE" ]; then
+              echo "Android Gradle project not found in ZIP"
+              exit 1
+            fi
+            PROJECT_DIR=$(dirname "$BUILD_GRADLE")
+            cd "$PROJECT_DIR"
+            gradle assembleDebug
           fi
-          PROJECT_DIR=$(dirname "$GRADLE_FILE")
-          cd "$PROJECT_DIR"
-          chmod +x gradlew
-          ./gradlew assembleDebug
+
+          
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
